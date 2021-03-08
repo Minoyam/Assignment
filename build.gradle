@@ -24,3 +24,15 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+ext {
+    gsonVersion = '2.8.6'
+    retrofitVersion = '2.9.0'
+    koinVersion = '2.1.5'
+    glideVersion = '4.11.0'
+    glideCompilerVersion = '4.10.0'
+    rxAndroidVersion = '2.1.1'
+    rxJavaVersion = '2.2.18'
+    legacyVersion = '1.0.0'
+
+
+}
