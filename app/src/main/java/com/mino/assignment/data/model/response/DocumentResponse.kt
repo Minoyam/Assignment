@@ -1,7 +1,8 @@
-package com.mino.assignment.data.model
+package com.mino.assignment.data.model.response
 
 
 import com.google.gson.annotations.SerializedName
+import com.mino.assignment.data.model.DocumentModel
 
 data class DocumentResponse(
     @SerializedName("authors")
@@ -28,4 +29,15 @@ data class DocumentResponse(
     val translators: List<String>,
     @SerializedName("url")
     val url: String
-)
+) {
+    fun toModel(): DocumentModel {
+        return DocumentModel(
+            contents = contents,
+            datetime = if (datetime.isEmpty()) datetime else datetime.substring(0, 10),
+            price = price,
+            thumbnail = thumbnail,
+            title = title,
+            publisher = publisher
+        )
+    }
+}
