@@ -38,7 +38,8 @@
                     android:hint="@string/fragment_book_list_search"
                     android:inputType="text"
                     android:padding="12dp"
-                    android:text="@={vm.query}" />
+                    bind:eventToString="@={vm.query}"
+                     />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -53,9 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="visible"
-                bind:page="@{vm.pageIndex}"
-                bind:bindSetBookItemList="@{vm.documentModelList}" />
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/tv_no_search"

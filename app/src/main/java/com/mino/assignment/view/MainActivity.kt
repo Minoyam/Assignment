@@ -10,6 +10,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main,R.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startFragment(BookListFragment.newInstance(),true)
+        startFragment(BookListFragment.newInstance(),false)
     }
 }

@@ -1,16 +1,17 @@
 package com.mino.assignment.view
 
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mino.assignment.EndlessScrollListener
-import com.mino.assignment.R
-import com.mino.assignment.RxEventBus
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.mino.assignment.*
 import com.mino.assignment.basic.BaseFragment
 import com.mino.assignment.data.model.DocumentModel
 import com.mino.assignment.databinding.FragmentBookListBinding
-import com.mino.assignment.plusAssign
 import com.mino.assignment.view.adapter.BookListAdapter
 import com.mino.assignment.viewmodel.BookViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -25,8 +26,7 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
         }
     }
 
-    private fun showDetailFragment(documentModel: DocumentModel)
-    {
+    private fun showDetailFragment(documentModel: DocumentModel) {
         setFragmentResult(
             SEND_DETAIL, bundleOf(DOCUMENT_MODEL to documentModel)
         )
@@ -40,8 +40,9 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
     override fun init() {
         setScroll(LinearLayoutManager(requireContext()))
         initView()
-        observeLiveData()
         receiveEvent()
+        viewLifecycleOwnerLiveData.observe(this, ::observeLiveData)
+
     }
 
     private fun initView() {
@@ -58,15 +59,18 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
         }
     }
 
-    private fun observeLiveData() {
+    private fun observeLiveData(viewLifecycleOwner: LifecycleOwner) {
         viewModel.run {
-            query.observe(this@BookListFragment, {
-                viewModel.setPageIndex(1)
+            query.observe(viewLifecycleOwner, EventObserver {
                 scrollListener.clear()
-                viewModel.getBook()
+                viewModel.getBook(it)
             })
-            metaModel.observe(this@BookListFragment, {
+            metaModel.observe(viewLifecycleOwner, EventObserver{
                 scrollListener.searchBoolean = !it.isEnd
+            })
+            documentModelList.observe(viewLifecycleOwner, EventObserver{
+                bookListAdapter.setItemsDiff(it.first,it.second)
+                scrollListener.loading = false
             })
         }
     }
@@ -74,8 +78,9 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
     private fun setScroll(linearLayoutManager: LinearLayoutManager) {
         scrollListener =
             EndlessScrollListener(linearLayoutManager) { page ->
-                viewModel.setPageIndex(page)
-                viewModel.getBook(page = page)
+                viewModel.query.value?.peekContent()?.let {
+                    viewModel.getBook(page = page,query = it)
+                }
             }
     }
 

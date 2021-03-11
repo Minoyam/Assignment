@@ -13,12 +13,7 @@ import io.reactivex.schedulers.Schedulers
 operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
     add(disposable)
 }
-
-
 fun <T> Single<T>.networkSchedulers(): Single<T> =
-    subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
-fun <T> Observable<T>.networkSchedulers(): Observable<T> =
     subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
 inline fun FragmentManager.transact(action: FragmentTransaction.() -> Unit) {

@@ -13,10 +13,12 @@ open class EndlessScrollListener(
     private var visibleItemCount: Int = 0
     private var totalItemCount: Int = 0
     private var pastVisibleItems: Int = 0
+    var loading = false
     var searchBoolean = true
 
     fun clear() {
         page = 1
+        loading = false
     }
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -27,9 +29,12 @@ open class EndlessScrollListener(
         visibleItemCount = manager.childCount
         totalItemCount = manager.itemCount
         pastVisibleItems = manager.findFirstVisibleItemPosition()
+        if (!loading) {
             if ((visibleItemCount + pastVisibleItems >= totalItemCount) && searchBoolean) {
+                loading = true
                 page++
                 lastItemListener(page)
+            }
         }
     }
 }

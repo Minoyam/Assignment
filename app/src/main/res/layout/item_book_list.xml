@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            bind:bindImage="@{item.thumbnail}"
-            tools:src="@drawable/ic_launcher_background" />
+            bind:image="@{item.thumbnail}"
+            tools:src="@drawable/ic_no_image" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                bind:bindSetPrice="@{item.price}"
+                bind:price="@{item.price}"
                 tools:text="20,000원" />
         </LinearLayout>
 
@@ -77,7 +77,7 @@
             android:padding="6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            bind:bindLikeImage="@{item.like}"
+            bind:likeImage="@{item.like}"
             tools:src="@drawable/ic_favorite_border_24dp" />
 
         <View
