@@ -1,4 +1,4 @@
-package com.mino.assignment
+package com.mino.assignment.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

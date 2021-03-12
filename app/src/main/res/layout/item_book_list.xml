@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -24,6 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             bind:image="@{item.thumbnail}"
+            bind:imageSize="@{300}"
             tools:src="@drawable/ic_no_image" />
 
         <LinearLayout

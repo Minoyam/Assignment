@@ -1,14 +1,14 @@
 package com.mino.assignment.view
 
-import android.util.Log
-import android.view.View
+import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
-import com.mino.assignment.*
+import com.mino.assignment.utils.EndlessScrollListener
+import com.mino.assignment.utils.EventObserver
+import com.mino.assignment.R
 import com.mino.assignment.basic.BaseFragment
 import com.mino.assignment.data.model.DocumentModel
 import com.mino.assignment.databinding.FragmentBookListBinding
@@ -17,6 +17,10 @@ import com.mino.assignment.viewmodel.BookViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment_book_list) {
+
+    private val viewModel by viewModel<BookViewModel>()
+
+    private lateinit var scrollListener: EndlessScrollListener
 
     private val bookListAdapter: BookListAdapter by lazy {
         BookListAdapter {
@@ -33,16 +37,9 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
         startFragment(BookDetailFragment.newInstance())
     }
 
-    private val viewModel by viewModel<BookViewModel>()
-
-    private lateinit var scrollListener: EndlessScrollListener
-
     override fun init() {
-        setScroll(LinearLayoutManager(requireContext()))
         initView()
-        receiveEvent()
         viewLifecycleOwnerLiveData.observe(this, ::observeLiveData)
-
     }
 
     private fun initView() {
@@ -61,16 +58,30 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
 
     private fun observeLiveData(viewLifecycleOwner: LifecycleOwner) {
         viewModel.run {
-            query.observe(viewLifecycleOwner, EventObserver {
+            query.observe(viewLifecycleOwner, EventObserver { query ->
                 scrollListener.clear()
-                viewModel.getBook(it)
+                viewModel.getBook(query = query)
             })
-            metaModel.observe(viewLifecycleOwner, EventObserver{
-                scrollListener.searchBoolean = !it.isEnd
+            metaModel.observe(viewLifecycleOwner, EventObserver { metaModel ->
+                scrollListener.searchBoolean = !metaModel.isEnd
             })
-            documentModelList.observe(viewLifecycleOwner, EventObserver{
-                bookListAdapter.setItemsDiff(it.first,it.second)
-                scrollListener.loading = false
+
+            documentModelList.observe(
+                viewLifecycleOwner,
+                EventObserver { pageAndDocumentModelList ->
+                    bookListAdapter.setItemsDiff(
+                        page = pageAndDocumentModelList.first,
+                        items = pageAndDocumentModelList.second
+                    )
+                    scrollListener.loading = false
+                })
+
+            errorMessage.observe(viewLifecycleOwner, EventObserver { errorMessage ->
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            })
+
+            isData.observe(viewLifecycleOwner, EventObserver { isData ->
+                binding.tvNoSearch.isVisible = isData
             })
         }
     }
@@ -78,27 +89,11 @@ class BookListFragment : BaseFragment<FragmentBookListBinding>(R.layout.fragment
     private fun setScroll(linearLayoutManager: LinearLayoutManager) {
         scrollListener =
             EndlessScrollListener(linearLayoutManager) { page ->
-                viewModel.query.value?.peekContent()?.let {
-                    viewModel.getBook(page = page,query = it)
+                viewModel.query.value?.peekContent()?.let { query ->
+                    viewModel.getBook(page = page, query = query)
                 }
             }
     }
-
-    private fun receiveEvent() {
-        with(binding) {
-            compositeDisposable += RxEventBus.subject.subscribe { resultCode ->
-                when (resultCode) {
-                    RxEventBus.NO_DATA -> {
-                        tvNoSearch.visibility = View.VISIBLE
-                    }
-                    RxEventBus.HAVE_DATA -> {
-                        tvNoSearch.visibility = View.GONE
-                    }
-                }
-            }
-        }
-    }
-
     companion object {
         const val SEND_DETAIL = "SEND_DETAIL"
         const val DOCUMENT_MODEL = "DOCUMENT_MODEL"

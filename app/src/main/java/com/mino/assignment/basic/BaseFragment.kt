@@ -8,14 +8,13 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import com.mino.assignment.transact
+import com.mino.assignment.utils.transact
 import io.reactivex.disposables.CompositeDisposable
 
 abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes private val layoutRes: Int) :
     Fragment() {
     protected lateinit var binding: B
-    protected val containerId by lazy { (activity as BaseActivity<*>).getContainerId().toInt() }
-    protected val compositeDisposable = CompositeDisposable()
+    private val containerId by lazy { (activity as BaseActivity<*>).getContainerId().toInt() }
 
     abstract fun init()
 
@@ -24,7 +23,6 @@ abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes private val layoutRe
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
         binding.lifecycleOwner = this
         return binding.root
@@ -34,12 +32,6 @@ abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes private val layoutRe
         super.onViewCreated(view, savedInstanceState)
         init()
     }
-
-    override fun onDestroy() {
-        compositeDisposable.clear()
-        super.onDestroy()
-    }
-
     fun onBackPressed() {
         if (parentFragmentManager.backStackEntryCount > 0) {
             parentFragmentManager.popBackStack()

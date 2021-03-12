@@ -7,7 +7,6 @@ import com.mino.assignment.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main,R.id.fl_container) {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startFragment(BookListFragment.newInstance(),false)

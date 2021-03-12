@@ -2,42 +2,27 @@ package com.mino.assignment.view.adapter
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.mino.assignment.Event
+import com.mino.assignment.utils.Event
 import com.mino.assignment.R
-import com.mino.assignment.data.model.DocumentModel
 import java.text.DecimalFormat
 
-@BindingAdapter("image")
-fun ImageView.setImage(imageUri: String?) {
+@BindingAdapter("image","imageSize")
+fun ImageView.setImage(imageUri: String?,imageSize : Int) {
     imageUri?.let {
         if (it.isEmpty()) {
-            Glide.with(context).load(R.drawable.ic_no_image).override(200, 300).into(this)
+            Glide.with(context).load(R.drawable.ic_no_image).override(imageSize).into(this)
         } else {
-                Glide.with(context).load(it).override(200, 300).into(this)
+                Glide.with(context).load(it).override(imageSize).into(this)
         }
     }
 }
-@BindingAdapter("imageDetail")
-fun ImageView.setImageDetail(imageUri: String?) {
-    imageUri?.let {
-        if (it.isEmpty()) {
-            Glide.with(context).load(R.drawable.ic_no_image).override(400).into(this)
-        } else {
-            Glide.with(context).load(it).override(400).into(this)
-        }
-    }
-
-}
-
 @BindingAdapter("likeImage")
 fun ImageView.setLikeImage(isLike: Boolean) {
     if (isLike) {
@@ -57,7 +42,6 @@ fun setEventToString(view: EditText, text: Event<String>?) {
     text?.getContentIfNotHandled()?.let {
         view.setText(it)
     }
-
 }
 
 @BindingAdapter("textAttrChanged")

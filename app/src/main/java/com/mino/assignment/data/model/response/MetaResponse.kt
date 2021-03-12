@@ -13,8 +13,6 @@ data class MetaResponse(
     val totalCount: Int
 ){
     fun toModel() = MetaModel(
-        isEnd = isEnd,
-        pageableCount = pageableCount,
-        totalCount = totalCount
+        isEnd = isEnd
     )
 }

@@ -1,12 +1,11 @@
 package com.mino.assignment.view.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mino.assignment.DiffDefault
+import com.mino.assignment.utils.DiffDefault
 import com.mino.assignment.R
 import com.mino.assignment.data.model.DocumentModel
 import com.mino.assignment.databinding.ItemBookListBinding
@@ -37,22 +36,19 @@ class BookListAdapter(private val onClickAction: (DocumentModel) -> Unit) :
     }
 
     fun setItemsDiff(page: Int, items: List<DocumentModel>) {
-
-        if(page == 1) {
+        if (page == 1) {
             calDiff(items)
             documentModelList.clear()
             documentModelList.addAll(items)
-        }
-        else{
-            val updateList = mutableListOf<DocumentModel>().apply {
-                addAll(documentModelList)
-            }
+        } else {
+            val updateList = mutableListOf<DocumentModel>().apply { addAll(documentModelList) }
             updateList.addAll(items)
             calDiff(updateList)
             documentModelList.clear()
             documentModelList.addAll(updateList)
         }
     }
+
     private fun calDiff(updateList: List<DocumentModel>) {
         val diff = DiffDefault(documentModelList, updateList)
         val diffResult = DiffUtil.calculateDiff(diff)
@@ -70,7 +66,6 @@ class BookListAdapter(private val onClickAction: (DocumentModel) -> Unit) :
             binding.run {
                 this.item = item
             }
-
         }
     }
 }
